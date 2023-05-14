@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SubscriptionRepository.cs" />
+    <Compile Remove="UserWordsRepository.cs" />
+    <Compile Remove="WordOfTheDayRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Business Services\AECS.Auth.Services.Models\AECS.Auth.Services.Models.csproj" />
+    <ProjectReference Include="..\..\Shared\AECS.Auth.Common\AECS.Auth.Common.csproj" />
+    <ProjectReference Include="..\AECS.Auth.Contract\AECS.Auth.Repository.Contract.csproj" />
+    <ProjectReference Include="..\AECS.Auth.Data.Contract\AECS.Auth.Contract.csproj" />
+    <ProjectReference Include="..\AECS.Auth.Data.Models\AECS.Auth.Data.Models.csproj" />
+    <ProjectReference Include="..\AECS.Auth.Data\AECS.Auth.Data.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,32 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ["AECS.Auth.api/Deploy/AECS.Auth.Api.csproj", "AECS.Auth.api/Deploy/"]
+COPY ["AECS.Auth.api/Business Services/AECS.Auth.Services.Contract/AECS.Auth.Services.Contract.csproj", "AECS.Auth.api/Business Services/AECS.Auth.Services.Contract/"]
+COPY ["AECS.Auth.api/Shared/AECS.Auth.Common/AECS.Auth.Common.csproj", "AECS.Auth.api/Shared/AECS.Auth.Common/"]
+COPY ["AECS.Auth.api/Business Services/AECS.Auth.Services.Models/AECS.Auth.Services.Models.csproj", "AECS.Auth.api/Business Services/AECS.Auth.Services.Models/"]
+COPY ["AECS.Auth.api/Business Services/AECS.Auth.Services/AECS.Auth.Services.csproj", "AECS.Auth.api/Business Services/AECS.Auth.Services/"]
+COPY ["AECS.Auth.api/Data Services/AECS.Auth.Contract/AECS.Auth.Repository.Contract.csproj", "AECS.Auth.api/Data Services/AECS.Auth.Contract/"]
+COPY ["AECS.Auth.api/Data Services/AECS.Auth.Data.Contract/AECS.Auth.Contract.csproj", "AECS.Auth.api/Data Services/AECS.Auth.Data.Contract/"]
+COPY ["AECS.Auth.api/Data Services/AECS.Auth.Data/AECS.Auth.Data.csproj", "AECS.Auth.api/Data Services/AECS.Auth.Data/"]
+COPY ["AECS.Auth.api/Data Services/AECS.Auth.Data.Models/AECS.Auth.Data.Models.csproj", "AECS.Auth.api/Data Services/AECS.Auth.Data.Models/"]
+COPY ["AECS.Auth.api/Shared/AECS.Auth.Ioc/AECS.Auth.Ioc.csproj", "AECS.Auth.api/Shared/AECS.Auth.Ioc/"]
+COPY ["AECS.Auth.api/Data Services/AECS.Auth.Repository/AECS.Auth.Repository.csproj", "AECS.Auth.api/Data Services/AECS.Auth.Repository/"]
+RUN dotnet restore "AECS.Auth.api/Deploy/AECS.Auth.Api.csproj"
+COPY . .
+WORKDIR "/src/AECS.Auth.api/Deploy"
+RUN dotnet build "AECS.Auth.Api.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "AECS.Auth.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "AECS.Auth.Api.dll"]
